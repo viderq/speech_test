@@ -1,5 +1,5 @@
 /*  Service Worker: Aviation Briefings demo  */
-const CACHE = 'briefings-cache-v1';
+const CACHE = 'briefings-cache-v2';
 
 /*  ⚠️ в кэш кладём ТОЛЬКО локальные файлы (одного origin)  */
 const PRECACHE = [
