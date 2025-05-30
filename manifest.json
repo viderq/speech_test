@@ -2,7 +2,7 @@
   "name": "Aviation Briefings",
   "short_name": "Briefings",
   "description": "Офф-лайн справочник авиационных инструктажей с поддержкой нескольких языков.",
-  "start_url": "speech_test/index.html",
+  "start_url": "/speech_test/index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#003366",
@@ -10,22 +10,22 @@
 
   "icons": [
     {
-      "src": "icons/icons8-prequel-app-64.png",
+      "src": "icons8-prequel-app-64.png",
       "sizes": "64x64",
       "type": "image/png"
     },
     {
-      "src": "icons/icons8-prequel-app-128.png",
+      "src": "icons8-prequel-app-128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "icons/icons8-prequel-app-256.png",
+      "src": "icons8-prequel-app-256.png",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "icons/icons8-prequel-app-512.png",
+      "src": "icons8-prequel-app-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
