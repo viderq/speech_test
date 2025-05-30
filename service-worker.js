@@ -29,28 +29,31 @@ self.addEventListener('activate', e => {
 });
 
 /* ---------- FETCH ---------- */
+/* ---------- FETCH ---------- */
 self.addEventListener('fetch', e => {
   const { request } = e;
 
-  /* навигация → всегда index.html */
   if (request.mode === 'navigate') {
     e.respondWith(
       caches.match('./index.html', { ignoreSearch: true })
-            .then(r => r || fetch(request))
+        .then(r => r || fetch(request))
     );
     return;
   }
 
-  /* другие запросы: Cache-First */
   e.respondWith(
-    caches.match(request).then(r => r ||
-      fetch(request).then(net => {
-        /* кэшируем ТОЛЬКО ответы того же origin */
+    caches.match(request).then(r => {
+      return r || fetch(request).then(net => {
+        const netClone = net.clone();
         if (net.ok && net.url.startsWith(self.location.origin)) {
-          caches.open(CACHE).then(c => c.put(request, net.clone()));
+          caches.open(CACHE)
+            .then(c => c.put(request, netClone))
+            .catch(err => console.warn('[SW] Cache put failed:', err));
         }
         return net;
-      })
-    )
+      }).catch(() => {
+        return caches.match('./index.html');
+      });
+    })
   );
 });
