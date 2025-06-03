@@ -1,22 +1,22 @@
-/*  Service Worker: Aviation Briefings demo  */
-const CACHE = 'briefings-cache-v3';
+/*  Service Worker для “Speech Test”  */
+const CACHE = 'speech-test-cache-v1';
 
-/*  Файлы, которые должны быть доступны офлайн сразу после установки  */
+/* Файлы, которые нужны оф-лайн сразу после установки */
 const PRECACHE = [
-  './index.html',
-  './manifest.json'
+  './',              // загрузит index.html
+  './manifest.json'  // манифест PWA
 ];
 
-/* ---------- helper: нормализуем ключи ---------- */
+/* ——— helper: нормализуем ключи ——— */
 function normalize(request) {
   const url = new URL(request.url);
 
-  /* корень сайта → ./index.html */
+  /* Корень сайта → ./index.html */
   if (url.origin === location.origin && url.pathname === '/') {
     return new Request('./index.html', { mode: 'same-origin' });
   }
 
-  /* убираем query-строку, чтобы /index.html?reload=1 не плодил дублей */
+  /* Убираем query-строку, чтобы /index.html?… не плодил дубликаты */
   url.search = '';
   return new Request(url, {
     mode: request.mode,
@@ -44,9 +44,7 @@ self.addEventListener('activate', event => {
   self.clients.claim();
   event.waitUntil(
     caches.keys().then(names =>
-      Promise.all(
-        names.map(name => (name === CACHE ? null : caches.delete(name)))
-      )
+      Promise.all(names.map(n => (n === CACHE ? null : caches.delete(n))))
     )
   );
 });
@@ -64,7 +62,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  /* Остальные запросы: cache-first, затем сеть с сохранением */
+  /* Статика: cache-first, затем сеть с сохранением */
   event.respondWith(
     caches.match(normalize(request)).then(
       cached => cached ||
@@ -73,9 +71,8 @@ self.addEventListener('fetch', event => {
             networkResp.ok &&
             networkResp.url.startsWith(self.location.origin)
           ) {
-            caches.open(CACHE).then(cache =>
-              cache.put(normalize(request), networkResp.clone())
-            );
+            caches.open(CACHE)
+                  .then(c => c.put(normalize(request), networkResp.clone()));
           }
           return networkResp;
         }).catch(() => caches.match('./index.html'))
