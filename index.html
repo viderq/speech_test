@@ -245,9 +245,17 @@
             </div>
         </div>
 
-        <div id="instructions-container">
-            <!-- Инструкции будут добавляться динамически -->
+        <div id="instructions-container" class="instruction-container">
+            <img id="briefing-image" class="instruction-image" src="" alt="">
+            <h2 class="instruction-title" id="briefing-title"></h2>
+            <p class="instruction-text" id="briefing-text"></p>
+            <div class="audio-controls">
+                <button id="play-audio" class="audio-btn">
+                    <i class="fas fa-play"></i> Начать инструктаж
+                </button>
+            </div>
         </div>
+
 
         <div class="navigation">
             <button id="prev-btn" class="nav-btn" disabled>
@@ -260,278 +268,11 @@
     </div>
 
     <script>
-        // Данные инструкций
-        // Infant
-        const instructionsData = {
-            ru: [
-                {
-                    title: "Добро пожаловать на борт!",
-                    text: "Добрый день! Рады приветствовать вас на борту!",
-                    image: "/speech_test/loopbelt_infant.png",
-                    audio: "https://example.com/audio/ru_life_jacket.mp3"
-                },
-                {
-                    title: "Кислородная маска",
-                    text: "При разгерметизации салона кислородная маска автоматически опустится перед вами. Наденьте маску, натянув эластичную ленту на голову, и дышите нормально.",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=Кислородная+маска",
-                    audio: "https://example.com/audio/ru_oxygen_mask.mp3"
-                },
-                {
-                    title: "Аварийные выходы",
-                    text: "Аварийные выходы расположены по обоим бортам самолета. В случае эвакуации следуйте к ближайшему выходу, следуя указателям подсветки на полу.",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=Аварийные+выходы",
-                    audio: "https://example.com/audio/ru_emergency_exit.mp3"
-                }
-            ],
-            zh: [
-                {
-                    title: "救生衣使用方法",
-                    text: "救生衣位于您的座位下方。抓住带子将其穿上并系紧带子。要充气，请拉动红色软管。",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=救生衣",
-                    audio: "https://example.com/audio/zh_life_jacket.mp3"
-                },
-                {
-                    title: "氧气面罩",
-                    text: "如果机舱失压，氧气面罩会自动掉落在您面前。将面罩盖住口鼻，拉紧头带，正常呼吸。",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=氧气面罩",
-                    audio: "https://example.com/audio/zh_oxygen_mask.mp3"
-                },
-                {
-                    title: "紧急出口",
-                    text: "紧急出口位于飞机两侧。如需疏散，请按照地板上的灯光指示前往最近的出口。",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=紧急出口",
-                    audio: "https://example.com/audio/zh_emergency_exit.mp3"
-                }
-            ],
-            en: [
-                {
-                    title: "Life Jacket Instructions",
-                    text: "The life jacket is located under your seat. Put it on by pulling the straps over your head and fasten the ties. To inflate, pull the red tabs.",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=Life+Jacket",
-                    audio: "https://example.com/audio/en_life_jacket.mp3"
-                },
-                {
-                    title: "Oxygen Mask",
-                    text: "If cabin pressure changes, oxygen masks will drop automatically. Pull the mask toward you to start the flow of oxygen. Breathe normally.",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=Oxygen+Mask",
-                    audio: "https://example.com/audio/en_oxygen_mask.mp3"
-                },
-                {
-                    title: "Emergency Exits",
-                    text: "Emergency exits are located on both sides of the aircraft. Follow the floor lighting to the nearest exit in case of evacuation.",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=Emergency+Exits",
-                    audio: "https://example.com/audio/en_emergency_exit.mp3"
-                }
-            ],
-            hi: [
-                {
-                    title: "लाइफ जैकेट का उपयोग",
-                    text: "लाइफ जैकेट आपकी सीट के नीचे स्थित है। इसे पट्टियों को खींचकर पहनें और बांधें। फुलाने के लिए लाल टैब खींचें।",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=लाइफ+जैकेट",
-                    audio: "https://example.com/audio/hi_life_jacket.mp3"
-                },
-                {
-                    title: "ऑक्सीजन मास्क",
-                    text: "यदि केबिन का दबाव बदलता है, तो ऑक्सीजन मास्क अपने आप गिर जाएगा। ऑक्सीजन प्रवाह शुरू करने के लिए मास्क को अपनी ओर खींचें। सामान्य रूप से सांस लें।",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=ऑक्सीजन+मास्क",
-                    audio: "https://example.com/audio/hi_oxygen_mask.mp3"
-                },
-                {
-                    title: "आपातकालीन निकास",
-                    text: "आपातकालीन निकास विमान के दोनों ओर स्थित हैं। निकासी के मामले में फर्श की रोशनी का पालन करते हुए निकटतम निकास पर जाएं।",
-                    image: "https://via.placeholder.com/300x200/003366/FFFFFF?text=आपातकालीन+निकास",
-                    audio: "https://example.com/audio/hi_emergency_exit.mp3"
-                }
-            ]
-        };
-
-        // Тексты интерфейса
-        const uiTexts = {
-            ru: {
-                appTitle: "Авиационные инструктажи",
-                prevBtn: "<i class='fas fa-arrow-left'></i> Назад",
-                nextBtn: "Далее <i class='fas fa-arrow-right'></i>",
-                playAudio: "<i class='fas fa-volume-up'></i> Прослушать",
-                inputPlaceholder: "Выберите язык"
-            },
-            zh: {
-                appTitle: "航空安全指示",
-                prevBtn: "<i class='fas fa-arrow-left'></i> 返回",
-                nextBtn: "下一步 <i class='fas fa-arrow-right'></i>",
-                playAudio: "<i class='fas fa-volume-up'></i> 播放音频",
-                inputPlaceholder: "选择语言"
-            },
-            en: {
-                appTitle: "Safety Instructions",
-                prevBtn: "<i class='fas fa-arrow-left'></i> Back",
-                nextBtn: "Next <i class='fas fa-arrow-right'></i>",
-                playAudio: "<i class='fas fa-volume-up'></i> Play Audio",
-                inputPlaceholder: "Select language"
-            },
-            hi: {
-                appTitle: "सुरक्षा निर्देश",
-                prevBtn: "<i class='fas fa-arrow-left'></i> पिछला",
-                nextBtn: "अगला <i class='fas fa-arrow-right'></i>",
-                playAudio: "<i class='fas fa-volume-up'></i> ऑडियो चलाएं",
-                inputPlaceholder: "भाषा चुनें"
-            }
-        };
-
-        // Информация о языках для отображения в выпадающем списке
-        const languagesInfo = {
-            ru: { code: "RU", name: "Русский", flag: "https://flagcdn.com/w40/ru.png" },
-            zh: { code: "CN", name: "中文 (Китайский)", flag: "https://flagcdn.com/w40/cn.png" },
-            en: { code: "EN", name: "English (Английский)", flag: "https://flagcdn.com/w40/us.png" },
-            hi: { code: "HI", name: "हिन्दी (Хинди)", flag: "https://flagcdn.com/w40/in.png" },
-            es: { code: "ES", name: "Español (Испанский)", flag: "https://flagcdn.com/w40/es.png" },
-            fr: { code: "FR", name: "Français (Французский)", flag: "https://flagcdn.com/w40/fr.png" },
-            de: { code: "DE", name: "Deutsch (Немецкий)", flag: "https://flagcdn.com/w40/de.png" },
-            ja: { code: "JA", name: "日本語 (Японский)", flag: "https://flagcdn.com/w40/jp.png" }
-        };
-
-        // Текущее состояние приложения
-        let currentState = {
-            language: 'ru',
-            currentInstruction: 0,
-            audio: null
-        };
 
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
-            renderInstructions();
-            setupEventListeners();
-            updateLanguageInput();
         });
 
-        // Рендеринг инструкций
-        function renderInstructions() {
-            const container = document.getElementById('instructions-container');
-            container.innerHTML = '';
-
-            const instructions = instructionsData[currentState.language] || instructionsData['en'];
-            const instruction = instructions[currentState.currentInstruction];
-
-            const instructionElement = document.createElement('div');
-            instructionElement.className = 'instruction-container';
-            instructionElement.innerHTML = `
-                <img src="${instruction.image}" alt="${instruction.title}" class="instruction-image">
-                <h2 class="instruction-title">${instruction.title}</h2>
-                <p class="instruction-text">${instruction.text}</p>
-                <div class="audio-controls">
-                    <button class="audio-btn" id="play-audio">
-                        ${uiTexts[currentState.language]?.playAudio || uiTexts['en'].playAudio}
-                    </button>
-                </div>
-            `;
-
-            container.appendChild(instructionElement);
-            updateUI();
-        }
-
-        // Обновление интерфейса
-        function updateUI() {
-            // Обновляем язык интерфейса
-            const langData = uiTexts[currentState.language] || uiTexts['en'];
-            document.getElementById('app-title').textContent = langData.appTitle;
-            document.getElementById('prev-btn').innerHTML = langData.prevBtn;
-            document.getElementById('next-btn').innerHTML = langData.nextBtn;
-            document.getElementById('language-input').placeholder = langData.inputPlaceholder;
-
-            // Обновляем кнопки навигации
-            const instructions = instructionsData[currentState.language] || instructionsData['en'];
-            document.getElementById('prev-btn').disabled = currentState.currentInstruction === 0;
-            document.getElementById('next-btn').disabled = currentState.currentInstruction === instructions.length - 1;
-
-            updateLanguageInput();
-        }
-
-        // Обновление поля ввода языка
-        function updateLanguageInput() {
-            const langInfo = languagesInfo[currentState.language];
-            if (langInfo) {
-                document.getElementById('language-input').value =
-                    `${langInfo.code} - ${langInfo.name.split(' (')[0]}`;
-            }
-        }
-
-        // Настройка обработчиков событий
-        function setupEventListeners() {
-            // Открытие/закрытие выпадающего списка языков
-            document.getElementById('language-input').addEventListener('click', function() {
-                document.getElementById('language-dropdown').classList.toggle('show');
-            });
-
-            // Выбор языка из списка
-            document.querySelectorAll('.language-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const lang = this.dataset.lang;
-                    currentState.language = lang;
-                    currentState.currentInstruction = 0;
-                    if (currentState.audio) {
-                        currentState.audio.pause();
-                        currentState.audio = null;
-                    }
-                    renderInstructions();
-                    document.getElementById('language-dropdown').classList.remove('show');
-                });
-            });
-
-            // Закрытие выпадающего списка при клике вне его
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.language-selector')) {
-                    document.getElementById('language-dropdown').classList.remove('show');
-                }
-            });
-
-            // Кнопки навигации
-            document.getElementById('prev-btn').addEventListener('click', function() {
-                if (currentState.currentInstruction > 0) {
-                    currentState.currentInstruction--;
-                    if (currentState.audio) {
-                        currentState.audio.pause();
-                        currentState.audio = null;
-                    }
-                    renderInstructions();
-                }
-            });
-
-            document.getElementById('next-btn').addEventListener('click', function() {
-                const instructions = instructionsData[currentState.language] || instructionsData['en'];
-                if (currentState.currentInstruction < instructions.length - 1) {
-                    currentState.currentInstruction++;
-                    if (currentState.audio) {
-                        currentState.audio.pause();
-                        currentState.audio = null;
-                    }
-                    renderInstructions();
-                }
-            });
-
-            // Обработчик для кнопки воспроизведения аудио
-            document.getElementById('instructions-container').addEventListener('click', function(e) {
-                if (e.target.id === 'play-audio' || e.target.closest('#play-audio')) {
-                    playAudio();
-                }
-            });
-        }
-
-        // Воспроизведение аудио
-        function playAudio() {
-            const instructions = instructionsData[currentState.language] || instructionsData['en'];
-            const audioUrl = instructions[currentState.currentInstruction].audio;
-
-            if (currentState.audio) {
-                currentState.audio.pause();
-            }
-
-            currentState.audio = new Audio(audioUrl);
-            currentState.audio.play().catch(e => {
-                console.error("Ошибка воспроизведения аудио:", e);
-                alert(currentState.language === 'ru' ?
-                    "Аудиофайл не найден. Пожалуйста, проверьте подключение к интернету." :
-                    "Audio file not found. Please check your internet connection.");
-            });
-        }
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
             navigator.serviceWorker
@@ -540,6 +281,130 @@
               .catch(err => console.error('SW registration error:', err));
           });
         }
+        const audioData = {
+          ru: {
+            audioSrc: 'https://example.com/audio/briefing_ru.mp3',
+            blocks: [
+              {
+                time: 0,
+                image: '/speech_test/loopbelt_infant.png',
+                title: 'Приветствие',
+                text: 'Добро пожаловать на борт! Мы рады видеть вас сегодня.'
+              },
+              {
+                time: 6,
+                image: '/speech_test/bassinet_offer.png',
+                title: 'Люлька',
+                text: 'Если вы хотите, я принесу детскую люльку.'
+              },
+              {
+                time: 14,
+                image: '/speech_test/loopbelt_offer.png',
+                title: 'Детский ремень',
+                text: 'Позвольте надеть детский ремень безопасности на ребенка.'
+              }
+            ]
+          },
+          en: {
+            audioSrc: 'https://example.com/audio/briefing_en.mp3',
+            blocks: [
+              {
+                time: 0,
+                image: '/speech_test/loopbelt_infant.png',
+                title: 'Welcome',
+                text: 'Welcome aboard! We are glad to see you today.'
+              },
+              {
+                time: 6,
+                image: '/speech_test/bassinet_offer.png',
+                title: 'Bassinet',
+                text: 'If you’d like, I can bring a baby bassinet for you.'
+              },
+              {
+                time: 14,
+                image: '/speech_test/loopbelt_offer.png',
+                title: 'Infant Seatbelt',
+                text: 'Let me attach the infant seatbelt to your baby.'
+              }
+            ]
+          }
+        };
+
+        let currentLang = 'ru';
+        let audio = new Audio(audioData[currentLang].audioSrc);
+        let audioBlocks = audioData[currentLang].blocks;
+        let currentIndex = 0;
+
+      function updateBlock(index) {
+        const block = audioBlocks[index];
+        document.getElementById('briefing-image').src = block.image;
+        document.getElementById('briefing-title').textContent = block.title;
+        document.getElementById('briefing-text').textContent = block.text;
+        document.getElementById('prev-btn').disabled = index === 0;
+        document.getElementById('next-btn').disabled = index === audioBlocks.length - 1;
+      }
+
+      document.getElementById('play-audio').addEventListener('click', () => {
+        audio.currentTime = 0;
+        audio.play();
+        currentIndex = 0;
+        updateBlock(currentIndex);
+      });
+
+      audio.ontimeupdate = () => {
+        if (
+          currentIndex < audioBlocks.length - 1 &&
+          audio.currentTime >= audioBlocks[currentIndex + 1].time
+        ) {
+          currentIndex++;
+          updateBlock(currentIndex);
+        }
+      };
+
+      document.getElementById('prev-btn').addEventListener('click', () => {
+        if (currentIndex > 0) {
+          audio.pause();
+          currentIndex--;
+          updateBlock(currentIndex);
+        }
+      });
+
+      document.getElementById('next-btn').addEventListener('click', () => {
+        if (currentIndex < audioBlocks.length - 1) {
+          audio.pause();
+          currentIndex++;
+          updateBlock(currentIndex);
+        }
+      });
+
+      updateBlock(currentIndex);
+
+      document.querySelectorAll('.language-option').forEach(option => {
+      option.addEventListener('click', function () {
+        const selectedLang = this.dataset.lang;
+        if (selectedLang in audioData) {
+          currentLang = selectedLang;
+          audio.pause();
+          audio = new Audio(audioData[currentLang].audioSrc);
+          audioBlocks = audioData[currentLang].blocks;
+          currentIndex = 0;
+          updateBlock(currentIndex);
+        }
+
+        document.getElementById('language-dropdown').classList.remove('show');
+        document.getElementById('language-input').value = this.innerText;
+      });
+    });
+
+    document.getElementById('language-input').addEventListener('click', function () {
+      document.getElementById('language-dropdown').classList.toggle('show');
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.language-selector')) {
+        document.getElementById('language-dropdown').classList.remove('show');
+      }
+    });
     </script>
 </body>
 </html>
