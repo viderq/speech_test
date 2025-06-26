@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авиационные инструктажи</title>
+    <title>Инструктажи</title>
     <style>
         * {
             margin: 0;
@@ -16,53 +16,98 @@
             background-color: #f0f2f5;
             color: #333;
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .container {
-            max-width: 100%;
-            padding: 20px;
+            max-width: 98%;
+            padding: 1vw;
+            flex: 1;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         header {
             background-color: #003366;
             color: white;
-            padding: 15px 0;
+            padding: 1vw 1vw;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 1.5vw;
             border-radius: 0 0 10px 10px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            flex: 1;
+            margin: 0 clamp(10px, 2vw, 20px);
         }
 
-        .language-selector {
+        .burger-menu {
+            position: absolute;
+            top: 1vw;
+            left: 1vw;
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            color: white;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -200px;
+            width: 200px;
+            height: 100vh;
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            transition: left 0.3s ease;
+            z-index: 600;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar .language-selector {
             position: relative;
-            margin-bottom: 20px;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 1.5vw;
+            width: 100%;
         }
 
         .language-input {
             width: 100%;
-            padding: 12px 15px;
+            padding: clamp(6px, 1vw, 10px) clamp(8px, 1.5vw, 12px);
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
             background-color: white;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #333;
         }
 
         .language-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
-            right: 0;
+            width: 100%;
             background-color: white;
             border: 1px solid #ddd;
             border-radius: 5px;
-            max-height: 300px;
+            max-height: 40vh;
             overflow-y: auto;
             z-index: 100;
             display: none;
@@ -74,11 +119,12 @@
         }
 
         .language-option {
-            padding: 10px 15px;
+            padding: clamp(6px, 1vw, 8px) clamp(8px, 1.5vw, 10px);
             display: flex;
             align-items: center;
             cursor: pointer;
             transition: background-color 0.2s;
+            width: 60px;
         }
 
         .language-option:hover {
@@ -86,90 +132,115 @@
         }
 
         .flag {
-            width: 24px;
-            height: 16px;
-            margin-right: 10px;
+            width: 18px;
+            height: 12px;
+            margin-right: 6px;
             background-size: cover;
             background-position: center;
             border: 1px solid #eee;
+            flex-shrink: 0;
         }
 
         .language-code {
             font-weight: bold;
-            margin-right: 8px;
             color: #003366;
-            min-width: 30px;
+            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+            width: 24px;
+            text-align: center;
         }
 
         .instruction-container {
             background-color: white;
             border-radius: 10px;
-            padding: 20px;
+            padding: 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            margin-bottom: 1.5vw;
+            flex: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid #ddd;
+            position: relative;
         }
 
         .instruction-image {
             width: 100%;
             height: auto;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 0;
             display: block;
         }
 
-        .instruction-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: #003366;
-        }
-
         .instruction-text {
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .audio-controls {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-        }
-
-        .audio-btn {
-            background-color: #0056b3;
+            position: absolute;
+            bottom: 10%;
+            left: 0;
+            right: 0;
+            margin: 0 clamp(10px, 2vw, 20px);
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            text-align: center;
             color: white;
-            border: none;
-            padding: 10px 20px;
+            background-color: rgba(200, 200, 200, 0.7);
+            padding: clamp(8px, 1.5vw, 12px) clamp(10px, 2vw, 20px);
             border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
+            display: none;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            transition: opacity 0.5s ease;
+        }
+
+        .instruction-text.fade-out {
+            opacity: 0;
+        }
+
+        .instruction-text.fade-in {
+            opacity: 1;
+        }
+
+        .instruction-text.show {
+            display: -webkit-box;
+        }
+
+        .header-controls {
             display: flex;
             align-items: center;
-            transition: background-color 0.3s;
+            gap: clamp(8px, 1vw, 12px);
+            flex-wrap: wrap;
         }
 
-        .audio-btn:hover {
-            background-color: #004494;
-        }
-
-        .audio-btn i {
-            margin-right: 8px;
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
+        .audio-btn,
         .nav-btn {
             background-color: #0056b3;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: clamp(6px, 0.8vw, 8px);
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(32px, 4vw, 40px);
+            height: clamp(32px, 4vw, 40px);
             transition: background-color 0.3s;
+        }
+
+        .audio-btn:hover,
+        .nav-btn:hover:not(:disabled) {
+            background-color: #004494;
+        }
+
+        .audio-btn i,
+        .nav-btn i {
+            margin: 0;
         }
 
         .nav-btn:disabled {
@@ -177,12 +248,58 @@
             cursor: not-allowed;
         }
 
-        .nav-btn:hover:not(:disabled) {
-            background-color: #004494;
-        }
-
         .hidden {
             display: none;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 95%;
+                margin: 0 auto;
+            }
+
+            .instruction-container {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 90%;
+            }
+
+            .instruction-container {
+                max-width: 1200px;
+            }
+
+            .instruction-image {
+                max-height: 75vh;
+                border-radius: 10px;
+            }
+
+            header {
+                padding: 0.5vw 1vw;
+                margin-bottom: 1vw;
+            }
+
+            h1 {
+                font-size: clamp(0.9rem, 2vw, 1.2rem);
+            }
+
+            .burger-menu {
+                top: 0.5vw;
+            }
         }
     </style>
     <link rel="icon" href="icons/icons8-prequel-app-64.png" sizes="64x64" type="image/png">
@@ -195,216 +312,746 @@
 </head>
 <body>
     <header>
+        <div class="burger-menu" id="burger-menu">
+            <i class="fas fa-bars"></i>
+        </div>
         <h1 id="app-title">Авиационные инструктажи</h1>
+        <div class="header-controls">
+            <button id="prev-btn" class="nav-btn" disabled>
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button id="play-audio" class="audio-btn">
+                <i class="fas fa-play"></i>
+            </button>
+            <button id="next-btn" class="nav-btn">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
     </header>
 
-    <div class="container">
+    <div class="sidebar" id="sidebar">
         <div class="language-selector">
-            <input type="text" class="language-input" placeholder="Выберите язык" readonly id="language-input">
+            <input type="text" class="language-input" placeholder="Язык" readonly id="language-input">
             <div class="language-dropdown" id="language-dropdown">
                 <div class="language-option" data-lang="ru">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/ru.png');"></div>
                     <span class="language-code">RU</span>
-                    <span>Русский</span>
                 </div>
                 <div class="language-option" data-lang="zh">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/cn.png');"></div>
                     <span class="language-code">CN</span>
-                    <span>中文 (Китайский)</span>
                 </div>
                 <div class="language-option" data-lang="en">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/us.png');"></div>
                     <span class="language-code">EN</span>
-                    <span>English (Английский)</span>
                 </div>
                 <div class="language-option" data-lang="hi">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/in.png');"></div>
                     <span class="language-code">HI</span>
-                    <span>हिन्दी (Хинди)</span>
                 </div>
                 <div class="language-option" data-lang="es">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/es.png');"></div>
                     <span class="language-code">ES</span>
-                    <span>Español (Испанский)</span>
                 </div>
                 <div class="language-option" data-lang="fr">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/fr.png');"></div>
                     <span class="language-code">FR</span>
-                    <span>Français (Французский)</span>
                 </div>
                 <div class="language-option" data-lang="de">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/de.png');"></div>
                     <span class="language-code">DE</span>
-                    <span>Deutsch (Немецкий)</span>
                 </div>
                 <div class="language-option" data-lang="ja">
                     <div class="flag" style="background-image: url('https://flagcdn.com/w40/jp.png');"></div>
                     <span class="language-code">JA</span>
-                    <span>日本語 (Японский)</span>
+                </div>
+                <div class="language-option" data-lang="hy">
+                    <div class="flag" style="background-image: url('https://flagcdn.com/w40/am.png');"></div>
+                    <span class="language-code">HY</span>
+                </div>
+                <div class="language-option" data-lang="ky">
+                    <div class="flag" style="background-image: url('https://flagcdn.com/w40/kg.png');"></div>
+                    <span class="language-code">KY</span>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="container">
         <div id="instructions-container" class="instruction-container">
             <img id="briefing-image" class="instruction-image" src="" alt="">
-            <h2 class="instruction-title" id="briefing-title"></h2>
             <p class="instruction-text" id="briefing-text"></p>
-            <div class="audio-controls">
-                <button id="play-audio" class="audio-btn">
-                    <i class="fas fa-play"></i> Начать инструктаж
-                </button>
-            </div>
-        </div>
-
-
-        <div class="navigation">
-            <button id="prev-btn" class="nav-btn" disabled>
-                <i class="fas fa-arrow-left"></i> Назад
-            </button>
-            <button id="next-btn" class="nav-btn">
-                Далее <i class="fas fa-arrow-right"></i>
-            </button>
         </div>
     </div>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    });
 
-        // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', function() {
-        });
-
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
             navigator.serviceWorker
-              .register('./service-worker.js')          // ⚠️ относительный путь
-              .then(r => console.log('SW registered, scope:', r.scope))
-              .catch(err => console.error('SW registration error:', err));
-          });
+                .register('./service-worker.js')
+                .then(r => console.log('SW registered, scope:', r.scope))
+                .catch(err => console.error('SW registration error:', err));
+        });
+    }
+
+    const audioData = {
+        ru: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'Приветствие',
+                    text: 'Добрый день! Рады приветствовать вас на борту!'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'Люлька',
+                    text: 'После набора высоты мы сможем предложить вам детскую люльку.'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'Детский ремень',
+                    text: 'Детский ремень безопасности я принесу, когда мы будем готовиться к взлету.'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'Ребенок на руках',
+                    text: 'Когда ребенок находится на руках, держите его головой «от прохода».'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'Подлокотники',
+                    text: 'Подлокотники кресел имеют подвижные части, будьте внимательны.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'Пеленальный столик',
+                    text: 'Туалетные комнаты оборудованы пеленальными столиками. Подгузник необходимо выбрасывать в мусоросборник.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'Завершение',
+                    text: 'Обращайтесь к нам в любое время, я и мои коллеги будем рады оказать вам необходимую помощь.'
+                }
+            ]
+        },
+        zh: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: '欢迎',
+                    text: '早上好！我们很高兴在飞机上欢迎您！'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: '婴儿床',
+                    text: '达到高度后，我们可以为您提供婴儿床。'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: '儿童安全带',
+                    text: '我们准备起飞时，我会为您带来儿童安全带。'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: '孩子在手上',
+                    text: '当孩子在您手上时，请将其头保持在“远离过道”的位置。'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: '扶手',
+                    text: '座椅扶手有可移动部分，请注意安全。'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: '换尿布台',
+                    text: '卫生间配备了换尿布台。请将尿布丢弃在垃圾桶中。'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: '结束',
+                    text: '随时联系我们，我和我的同事将乐于为您提供必要的帮助。'
+                }
+            ]
+        },
+        en: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'Welcome',
+                    text: 'Good afternoon! We are glad to welcome you on board!'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'Bassinet',
+                    text: 'After reaching altitude, we can offer you a baby bassinet.'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'Infant Seatbelt',
+                    text: 'I will bring the infant safety belt when we prepare for takeoff.'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'Child in Arms',
+                    text: 'When the child is in your arms, keep their head “away from the aisle.”'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'Armrests',
+                    text: 'The armrests of the seats have movable parts, please be careful.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'Changing Table',
+                    text: 'The restrooms are equipped with changing tables. Please dispose of diapers in the trash bin.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'Conclusion',
+                    text: 'Feel free to contact us anytime; my colleagues and I will be happy to assist you.'
+                }
+            ]
+        },
+        hi: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'स्वागत',
+                    text: 'सुबह बखैर! हम आपको हमारे विमान पर स्वागत करने में खुश हैं!'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'शिशु पालना',
+                    text: 'ऊंचाई प्राप्त करने के बाद हम आपके लिए शिशु पालना प्रदान कर सकते हैं।'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'बच्चे की सीट बेल्ट',
+                    text: 'हम उड़ान के लिए तैयार होने पर मैं बच्चे की सुरक्षा बेल्ट लाऊंगा।'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'बच्चा हाथों में',
+                    text: 'जब बच्चा आपके हाथों में हो, तो उसके सिर को "गलियारे से दूर" रखें।'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'हाथ की रेलिंग',
+                    text: 'सीटों की हाथ की रेलिंग में गतिशील हिस्से हैं, कृपया सावधान रहें।'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'डायपर बदलने की मेज',
+                    text: 'शौचालयों में डायपर बदलने की मेज उपलब्ध हैं। कृपया डायपर को कचरा पात्र में डालें।'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'समापन',
+                    text: 'किसी भी समय हमसे संपर्क करें, मैं और मेरे सहकर्मी आपको आवश्यक सहायता प्रदान करने में खुश होंगे।'
+                }
+            ]
+        },
+        es: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'Bienvenida',
+                    text: '¡Buenas tardes! ¡Estamos felices de darles la bienvenida a bordo!'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'Cuna',
+                    text: 'Después de alcanzar la altura, podremos ofrecerles una cuna para bebés.'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'Cinturón infantil',
+                    text: 'Traeré el cinturón de seguridad infantil cuando estemos preparándonos para el despegue.'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'Niño en brazos',
+                    text: 'Cuando el niño esté en sus brazos, mantenga su cabeza "lejos del pasillo".'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'Reposabrazos',
+                    text: 'Los reposabrazos de los asientos tienen partes móviles, por favor tengan cuidado.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'Mesa para cambiar pañales',
+                    text: 'Los baños están equipados con mesas para cambiar pañales. Por favor, desechen los pañales en el contenedor de basura.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'Conclusión',
+                    text: 'Siéntanse libres de contactarnos en cualquier momento; mis colegas y yo estaremos encantados de ayudarles.'
+                }
+            ]
+        },
+        fr: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'Bienvenue',
+                    text: 'Bon après-midi ! Nous sommes ravis de vous accueillir à bord !'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'Berceau',
+                    text: 'Après avoir atteint l’altitude, nous pourrons vous proposer un berceau pour bébé.'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'Ceinture pour enfant',
+                    text: 'Je apporterai la ceinture de sécurité pour enfant lorsque nous nous préparerons au décollage.'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'Enfant dans les bras',
+                    text: 'Lorsque l’enfant est dans vos bras, gardez sa tête « loin du couloir ».'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'Accoudoirs',
+                    text: 'Les accoudoirs des sièges ont des parties mobiles, soyez prudents.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'Table à langer',
+                    text: 'Les toilettes sont équipées de tables à langer. Veuillez jeter les couches dans la poubelle.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'Conclusion',
+                    text: 'N’hésitez pas à nous contacter à tout moment ; mes collègues et moi serons ravis de vous aider.'
+                }
+            ]
+        },
+        de: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'Willkommen',
+                    text: 'Guten Tag! Wir freuen uns, Sie an Bord willkommen zu heißen!'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'Babybett',
+                    text: 'Nach dem Erreichen der Höhe können wir Ihnen ein Babybett anbieten.'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'Kindersicherheitsgurt',
+                    text: 'Ich bringe den Kindersicherheitsgurt, wenn wir uns auf den Start vorbereiten.'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'Kind auf dem Arm',
+                    text: 'Wenn das Kind auf dem Arm ist, halten Sie seinen Kopf „vom Gang entfernt“.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'Armlehnen',
+                    text: 'Die Armlehnen der Sitze haben bewegliche Teile, seien Sie vorsichtig.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'Wickeltisch',
+                    text: 'Die Toiletten sind mit Wickeltischen ausgestattet. Bitte entsorgen Sie Windeln im Mülleimer.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'Schluss',
+                    text: 'Zögern Sie nicht, uns jederzeit zu kontaktieren; meine Kollegen und ich helfen Ihnen gerne.'
+                }
+            ]
+        },
+        ja: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: '歓迎',
+                    text: 'こんにちは！機内でお迎えできることを嬉しく思います！'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'ベビーベッド',
+                    text: '高度に達した後、ベビーベッドをご用意できます。'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: '子供用安全ベルト',
+                    text: '離陸の準備が整うとき、子供用安全ベルトをお持ちします。'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: '子供を腕に',
+                    text: '子供が腕にいるときは、頭を「通路から離して」ください。'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'アームレスト',
+                    text: '座席のアームレストには可動部分がありますのでご注意ください。'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'おむつ交換台',
+                    text: 'トイレにはおむつ交換台が備え付けられています。おむつはごみ箱に捨ててください。'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: '終了',
+                    text: 'いつでもお気軽にご連絡ください。私の同僚と私は喜んでお手伝いいたします。'
+                }
+            ]
+        },
+        hy: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'Ողջույն',
+                    text: 'Բարի օր! Շնորհակալ ենք ձեզ մեր օդանավում ողջունելու համար!'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'Ծն cradle',
+                    text: 'Բարձրացումից հետո մենք կկարողանանք առաջարկել ձեզ մանկական խորշ։'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'Երեխայի գոտի',
+                    text: 'Երեխայի անվտանգության գոտին ես կբերեմ, երբ մենք պատրաստվում ենք վայրիվերում։'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'Երեխան ձեռքերում',
+                    text: 'Երբ երեխան ձեր ձեռքերում է, պահեք նրա գլուխը «անցումից հեռու»։'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'Ձեռնաշարժ',
+                    text: 'Ցուցակի ձեռնաշարժներն ունեն շարժական մասեր, խնդրում ենք զգոն լինել։'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'Փոխել սեղանը',
+                    text: 'Սանհանգույցները հագեցած են փոխելու սեղաններով: Խնդրում ենք ներքնաշըքը նետել աղբաման։'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'Ավարտ',
+                    text: 'Կարող եք մեզ դիմել ցանկացած պահի, ես և իմ գործընկերները կլինենք ուրախ օգնելու ձեզ անհրաժեշտ օգնություն։'
+                }
+            ]
+        },
+        ky: {
+            audioSrc: 'audio/infant_pre_flight_instruction.mp3',
+            blocks: [
+                {
+                    time: 11,
+                    image: 'images/infant_greetings.png',
+                    title: 'Кош келиңиз',
+                    text: 'Күнүңүз менен! Сизди биздин учакта тосуп алганыбызга кубанычтабыз!'
+                },
+                {
+                    time: 3,
+                    image: 'images/babycot.png',
+                    title: 'Балалык койка',
+                    text: 'Бийиктикке көтөрүлгөндөн кийин биз сизге балалык койканы сунуштай алабыз.'
+                },
+                {
+                    time: 7,
+                    image: 'images/loopbelt_infant.png',
+                    title: 'Баланын белбеги',
+                    text: 'Баланын коопсуздук белбеги мен сиздер учууну даярданганда алып келейин.'
+                },
+                {
+                    time: 11,
+                    image: 'images/head_from_isle.png',
+                    title: 'Бала колдордо',
+                    text: 'Бала сиздин колдорунда турганда, анын башын «өтмөктөн алыс» кармаңыз.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_chair.png',
+                    title: 'Колдоо',
+                    text: 'Орундуктардын колдоолору жылма төлөмдөрдү камтыйт, этият болуңуз.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_lav.png',
+                    title: 'Көчөт үстөл',
+                    text: 'Санитардык бөлмөлөр балдар үчүн үстөлдөр менен жабдылган. Салфетканы чүптөнгүчкө ыргытыңыз.'
+                },
+                {
+                    time: 7,
+                    image: 'images/infant_toy.png',
+                    title: 'Аяктоо',
+                    text: 'Сиз кааласаңыз, бизге качан гана кааласаңыз кайрылыңыз, мен жана менин кесиптештерим сизге кereктүү жардам берүүгө кубанычтабыз.'
+                }
+            ]
         }
-        const audioData = {
-          ru: {
-            audioSrc: 'https://example.com/audio/briefing_ru.mp3',
-            blocks: [
-              {
-                time: 0,
-                image: 'images/infant_greetings.png',
-                title: 'Приветствие',
-                text: 'Добро пожаловать на борт! Мы рады видеть вас сегодня.'
-              },
-              {
-                time: 6,
-                image: 'images/babycot.png',
-                title: 'Люлька',
-                text: 'Если вы хотите, я принесу детскую люльку.'
-              },
-              {
-                time: 14,
-                image: 'images/loopbelt_infant.png',
-                title: 'Детский ремень',
-                text: 'Позвольте надеть детский ремень безопасности на ребенка.'
-              }
-            ]
-          },
-          en: {
-            audioSrc: 'https://example.com/audio/briefing_en.mp3',
-            blocks: [
-              {
-                time: 0,
-                image: 'images/infant_greetings.png',
-                title: 'Welcome',
-                text: 'Welcome aboard! We are glad to see you today.'
-              },
-              {
-                time: 6,
-                image: 'images/babycot.png',
-                title: 'Bassinet',
-                text: 'If you’d like, I can bring a baby bassinet for you.'
-              },
-              {
-                time: 14,
-                image: 'images/loopbelt_infant.png',
-                title: 'Infant Seatbelt',
-                text: 'Let me attach the infant seatbelt to your baby.'
-              }
-            ]
-          }
-        };
+    };
 
-        let currentLang = 'ru';
-        let audio = new Audio(audioData[currentLang].audioSrc);
-        let audioBlocks = audioData[currentLang].blocks;
-        let currentIndex = 0;
+    let currentLang = 'ru';
+    let audio = new Audio(audioData[currentLang].audioSrc);
+    let audioBlocks = audioData[currentLang].blocks;
+    let currentIndex = 0;
 
-      function updateBlock(index) {
+    function updateBlock(index) {
         const block = audioBlocks[index];
-        document.getElementById('briefing-image').src = block.image;
-        document.getElementById('briefing-title').textContent = block.title;
-        document.getElementById('briefing-text').textContent = block.text;
+        const textElement = document.getElementById('briefing-text');
+
+        // Check if text is already visible
+        if (textElement.classList.contains('show')) {
+            // Trigger fade-out animation
+            textElement.classList.remove('fade-in');
+            textElement.classList.add('fade-out');
+
+            // Wait for fade-out to complete before updating
+            setTimeout(() => {
+                splitTextIfOverflow(textElement, block.text); // Update text after fade-out
+                document.getElementById('briefing-image').src = block.image;
+                textElement.classList.remove('fade-out');
+                textElement.classList.add('fade-in', 'show');
+            }, 500); // Match the CSS transition duration (0.5s)
+        } else {
+            // If not visible, set text and image directly with fade-in
+            splitTextIfOverflow(textElement, block.text);
+            document.getElementById('briefing-image').src = block.image;
+            textElement.classList.add('fade-in', 'show');
+        }
+
         document.getElementById('prev-btn').disabled = index === 0;
         document.getElementById('next-btn').disabled = index === audioBlocks.length - 1;
-      }
+    }
 
-      document.getElementById('play-audio').addEventListener('click', () => {
+    document.getElementById('play-audio').addEventListener('click', () => {
         audio.currentTime = 0;
         audio.play();
         currentIndex = 0;
         updateBlock(currentIndex);
-      });
+    });
 
-      audio.ontimeupdate = () => {
+    audio.ontimeupdate = () => {
         if (
-          currentIndex < audioBlocks.length - 1 &&
-          audio.currentTime >= audioBlocks[currentIndex + 1].time
+            currentIndex < audioBlocks.length - 1 &&
+            audio.currentTime >= audioBlocks[currentIndex + 1].time
         ) {
-          currentIndex++;
-          updateBlock(currentIndex);
+            currentIndex++;
+            updateBlock(currentIndex);
         }
-      };
+    };
 
-      document.getElementById('prev-btn').addEventListener('click', () => {
+    document.getElementById('prev-btn').addEventListener('click', () => {
         if (currentIndex > 0) {
-          audio.pause();
-          currentIndex--;
-          updateBlock(currentIndex);
+            audio.pause();
+            currentIndex--;
+            updateBlock(currentIndex);
         }
-      });
+    });
 
-      document.getElementById('next-btn').addEventListener('click', () => {
+    document.getElementById('next-btn').addEventListener('click', () => {
         if (currentIndex < audioBlocks.length - 1) {
-          audio.pause();
-          currentIndex++;
-          updateBlock(currentIndex);
+            audio.pause();
+            currentIndex++;
+            updateBlock(currentIndex);
         }
-      });
+    });
 
-      updateBlock(currentIndex);
+    document.getElementById('briefing-text').classList.add('show'); // Ensure subtitle block is visible by default
+    updateBlock(currentIndex);
 
-      document.querySelectorAll('.language-option').forEach(option => {
-      option.addEventListener('click', function () {
-        const selectedLang = this.dataset.lang;
-        if (selectedLang in audioData) {
-          currentLang = selectedLang;
-          audio.pause();
-          audio = new Audio(audioData[currentLang].audioSrc);
-          audioBlocks = audioData[currentLang].blocks;
-          currentIndex = 0;
-          updateBlock(currentIndex);
+    const burgerMenu = document.getElementById('burger-menu');
+    const sidebar = document.getElementById('sidebar');
+
+    burgerMenu.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.sidebar') && !e.target.closest('.burger-menu')) {
+            sidebar.classList.remove('open');
+            document.getElementById('language-dropdown').classList.remove('show');
         }
+    });
 
-        document.getElementById('language-dropdown').classList.remove('show');
-        document.getElementById('language-input').value = this.innerText;
-      });
+    document.querySelectorAll('.language-option').forEach(option => {
+        option.addEventListener('click', function () {
+            const selectedLang = this.dataset.lang;
+            if (selectedLang in audioData) {
+                currentLang = selectedLang;
+                audio.pause();
+                audio = new Audio(audioData[currentLang].audioSrc);
+                audioBlocks = audioData[currentLang].blocks;
+                currentIndex = 0;
+                updateBlock(currentIndex);
+                document.getElementById('briefing-text').classList.remove('show'); // Remove show class before updating
+                setTimeout(() => document.getElementById('briefing-text').classList.add('show'), 0); // Re-add to trigger display
+            } else {
+                console.warn(`Language ${selectedLang} not supported yet. Defaulting to ${currentLang}.`);
+                document.getElementById('briefing-text').classList.add('show'); // Keep subtitle visible
+            }
+
+            document.getElementById('language-dropdown').classList.remove('show');
+            const languageCode = this.querySelector('.language-code').textContent;
+            document.getElementById('language-input').value = languageCode;
+            sidebar.classList.remove('open');
+        });
     });
 
     document.getElementById('language-input').addEventListener('click', function () {
-      document.getElementById('language-dropdown').classList.toggle('show');
+        document.getElementById('language-dropdown').classList.toggle('show');
     });
 
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('.language-selector')) {
-        document.getElementById('language-dropdown').classList.remove('show');
-      }
-    });
-    </script>
+    document.getElementById('language-input').value = 'RU';
+
+        let textParts = [];
+let currentTextPart = 0;
+let textPartTimer = null;
+
+// Разбить текст на части, если он не помещается
+function splitTextIfOverflow(textElement, fullText) {
+    // Сброс
+    textParts = [];
+    currentTextPart = 0;
+    clearTimeout(textPartTimer);
+
+    // Временно вставляем полный текст
+    textElement.textContent = fullText;
+
+    // Отложим проверку на 100 мс, чтобы дождаться отрисовки
+    setTimeout(() => {
+        const isOverflowing = textElement.scrollHeight > textElement.offsetHeight + 1;
+
+        if (!isOverflowing) {
+            // Всё помещается — показать как есть
+            textElement.textContent = fullText;
+            return;
+        }
+
+        // Разбиваем текст
+        const words = fullText.split(' ');
+        let part = '';
+
+        textParts = [];
+
+        for (let i = 0; i < words.length; i++) {
+            const test = part ? part + ' ' + words[i] : words[i];
+            textElement.textContent = test;
+
+            if (textElement.scrollHeight > textElement.offsetHeight + 1) {
+                textParts.push(part.trim());
+                part = words[i];
+            } else {
+                part = test;
+            }
+        }
+
+        if (part) textParts.push(part.trim());
+
+        showNextTextPart(textElement);
+    }, 100);
+}
+
+
+// Показать следующую часть текста
+function showNextTextPart(textElement) {
+    if (!textParts.length) return;
+
+    textElement.classList.remove('fade-in');
+    textElement.classList.add('fade-out');
+
+    setTimeout(() => {
+        textElement.textContent = textParts[currentTextPart];
+        textElement.classList.remove('fade-out');
+        textElement.classList.add('fade-in');
+
+        currentTextPart++;
+        if (currentTextPart < textParts.length) {
+            clearTimeout(textPartTimer);
+            textPartTimer = setTimeout(() => showNextTextPart(textElement), 3000); // Интервал в мс
+        }
+    }, 500); // Пауза на fade
+}
+
+</script>
 </body>
 </html>

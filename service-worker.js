@@ -3,8 +3,8 @@ const CACHE = 'briefings-cache-v6';
 
 /* Файлы, которые нужны оф-лайн сразу после установки */
 const PRECACHE = [
-  './',              // загрузит index.html
-  './manifest.json'  // манифест PWA
+  './index.html',
+  './manifest.json'
 ];
 
 /* ——— helper: нормализуем ключи ——— */
@@ -30,11 +30,17 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE).then(async cache => {
       await Promise.all(
-        PRECACHE.map(async url => {
-          const response = await fetch(url, { cache: 'no-cache' });
-          await cache.put(normalize(new Request(url)), response);
-        })
-      );
+  PRECACHE.map(async url => {
+    try {
+      const response = await fetch(url, { cache: 'no-cache' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      await cache.put(normalize(new Request(url)), response);
+    } catch (err) {
+      console.error(`❌ Failed to precache ${url}:`, err);
+    }
+  })
+);
+
     })
   );
 });
@@ -56,7 +62,7 @@ self.addEventListener('fetch', event => {
   /* Навигации → всегда index.html */
   if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match('./index.html', { ignoreSearch: true })
+      caches.match(normalize(new Request('./index.html')))
             .then(resp => resp || fetch(request))
     );
     return;
@@ -75,7 +81,7 @@ self.addEventListener('fetch', event => {
                   .then(c => c.put(normalize(request), networkResp.clone()));
           }
           return networkResp;
-        }).catch(() => caches.match('./index.html'))
+        }).catch(() => caches.match(normalize(new Request('./index.html'))))
     )
   );
 });
