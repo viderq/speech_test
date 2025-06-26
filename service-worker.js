@@ -1,5 +1,5 @@
 /*  Service Worker для “Speech Test”  */
-const CACHE = 'briefings-cache-v6';
+const CACHE = 'briefings-cache-v7';
 
 /* Файлы, которые нужны оф-лайн сразу после установки */
 const PRECACHE = [
